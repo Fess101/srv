@@ -26,6 +26,34 @@ void* thread_func(void* arg) {
     // Освобождаем спин-лок
     pthread_spin_unlock(&spinlock);
     
+    return NULL;
+}
+
+int main() {
+    pthread_t thread1, thread2;
+    int thread_num1 = 1, thread_num2 = 2;
+    
+    // Инициализируем спин-лок
+    if (pthread_spin_init(&spinlock, PTHREAD_PROCESS_PRIVATE) != 0) {
+        perror("Ошибка инициализации спин-лока");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Создаем потоки...\n");
+    
+    // Создаем два потока
+    pthread_create(&thread1, NULL, thread_func, &thread_num1);
+    pthread_create(&thread2, NULL, thread_func, &thread_num2);
+    
+    // Ждем завершения потоков
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    
+    // Уничтожаем спин-лок
+    pthread_spin_destroy(&spinlock);
+    
+    printf("Все потоки завершили работу.\n");
+    
 printf("Sergeev Vladislav Vladimirovich i914B\n");
     return 1;
 }
